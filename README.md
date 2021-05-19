@@ -3,15 +3,15 @@ Buy 3000 series graphics cards on Best Buy with Selenium Python.
 Supplied webdriver only compatible with Chrome Version 90.
 
 # Usage
-python3 main.py <brand> <series>
+python3 buy_card.py <brand> <series>
 
 Example:
-python3 main.py nvidia 3070
+python3 buy_card.py nvidia 3070
 
-Supported brands:
+Supported brands (price low to high):
 - nvidia
-- asus
 - evga
+- asus
 - msi
 
 Supported series:
@@ -21,6 +21,6 @@ Supported series:
 - 3090
 
 If any typo or error occurs, defaults cli args to:
-python3 main.py nvidia 3060ti
+python3 buy_card.py nvidia 3060ti
 
 Configure username & password to login in the .env file
