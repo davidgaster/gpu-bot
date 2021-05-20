@@ -27,33 +27,36 @@ import time
 
 load_dotenv()
 USERNAME = os.getenv('USERNAME')
+SECONDARY_USER = os.getenv('SECONDARY_USER')
 PASSWORD = os.getenv('PASSWORD')
+SECONDARY_PW = os.getenv('SECONDARY_PW')
 CVV = os.getenv('CVV')
 
 def get_input(args):
     brand, series = '', ''
     if len(args) < 3:
-        return ('fitbit', 'test')
-    elif len(args) != 3:
-        return ('nvidia', '3060ti')
+        return ('fitbit', 'test', '1')
+    elif len(args) != 4:
+        return ('nvidia', '3060ti', '1')
     else:
-        brand, series = args[1].lower(), args[2].lower()
+        brand, series, user = args[1].lower(), args[2].lower(), args[3]
     
     if series not in card_link:
         series = '3060ti'
     if brand not in card_link[series]:
         brand = 'nvidia'
+    if user not in ['1', '2']:
+        user = '1'
 
-    return brand, series
+    return brand, series, user
 
-def signin(driver):
+def signin(driver, username, password):
     driver.get('https://www.bestbuy.com/identity/global/signin')
-    driver.maximize_window()
     try:
         email_field = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'fld-e'))
         )
-        email_field.send_keys(USERNAME)
+        email_field.send_keys(username)
     except:
         print('entering email failed after 10s')
     
@@ -61,7 +64,7 @@ def signin(driver):
         pw_field = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'fld-p1'))
         )
-        pw_field.send_keys(PASSWORD)
+        pw_field.send_keys(password)
     except:
         print('entering password failed after 10s')
 
@@ -89,11 +92,13 @@ def signin(driver):
 '''
 if __name__ == '__main__':
 
-    brand, series = get_input(sys.argv)
+    brand, series, user = get_input(sys.argv)
     gpu_link = card_link[series][brand]
 
     driver = webdriver.Chrome('../webdriver/chromedriver')
-    signin(driver)
+    username = USERNAME if user == '1' else SECONDARY_USER
+    password = PASSWORD if user == '1' else SECONDARY_PW
+    signin(driver, username, password)
     # Wait to move on until successfully signed in.
     try:
         # id = shop-header
@@ -117,7 +122,7 @@ if __name__ == '__main__':
             )
             add_to_cart_button.click()
             cart_count += 1
-            print('clicked add to cart x', cart_count)
+            print('clicked add to cart: ', cart_count)
         except:
             print(f'unable to add to cart on try {cart_count}')
             count += 1
