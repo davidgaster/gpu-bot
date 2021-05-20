@@ -71,10 +71,10 @@ while not isComplete:
         print("Attempting to place order")
 
         # place order
-        placeOrderBtn = WebDriverWait(driver, 10).until(
+        place_order_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".button__fast-track"))
         )
-        placeOrderBtn.click()
+        place_order_button.click()
 
         isComplete = True
     except:

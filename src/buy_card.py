@@ -28,12 +28,13 @@ import time
 load_dotenv()
 USERNAME = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
+CVV = os.getenv('CVV')
 
 def get_input(args):
     brand, series = '', ''
     if len(args) < 3:
         return ('fitbit', 'test')
-    elif len(args != 3):
+    elif len(args) != 3:
         return ('nvidia', '3060ti')
     else:
         brand, series = args[1].lower(), args[2].lower()
@@ -44,6 +45,34 @@ def get_input(args):
         brand = 'nvidia'
 
     return brand, series
+
+def signin(driver):
+    driver.get('https://www.bestbuy.com/identity/global/signin')
+    driver.maximize_window()
+    try:
+        email_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'fld-e'))
+        )
+        email_field.send_keys(USERNAME)
+    except:
+        print('entering email failed after 10s')
+    
+    try:
+        pw_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'fld-p1'))
+        )
+        pw_field.send_keys(PASSWORD)
+    except:
+        print('entering password failed after 10s')
+
+    try:
+        signin_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.cia-form__controls__submit'))
+        )
+        signin_button.click()
+        print("Clicked Sign in")
+    except:
+        print('Failed to locate sign in submission after 10s.')
 
 ##########################
 #####      MAIN      #####
@@ -58,37 +87,57 @@ def get_input(args):
 7. Click Checkout
 8. Manually finish this step.
 '''
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     brand, series = get_input(sys.argv)
-    link = card_link[series][brand]
+    gpu_link = card_link[series][brand]
+
     driver = webdriver.Chrome('../webdriver/chromedriver')
-    driver.get(link)
-    driver.maximize_window()
-    time.sleep(5)
+    signin(driver)
+    # Wait to move on until successfully signed in.
+    try:
+        # id = shop-header
+        shop_header_exists = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.shop-header'))
+        ) 
+    except:
+        print('signin timed out after 10s')
+    
 
-    driver2 = webdriver.Chrome('../webdriver/chromedriver')
-    driver2.get(link)
-
-    while True:
-
+    driver.get(gpu_link)
+    in_progress = True
+    count = 1
+    while in_progress and count < 6:
+        
+        print('iteration ', count)
+        print('------------')
         try:
-            add_to_cart_button = WebDriverWait(driver, 30).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".add-to-cart-button"))
+            add_to_cart_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, '.add-to-cart-button'))
             )
+            add_to_cart_button.click()
+            print('clicked add to cart (x1)')
+
+           # Wait to move on until successfully added to cart.
+            added_to_cart = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.added-to-cart'))
+            ) 
         except:
-            driver.refresh()
+            print('unable to add to cart')
+            count += 1
             continue
         
-        add_to_cart_button.click()
-        print('clicked add to cart x1')
-        time.sleep(10)
+        
+        driver.get('https://www.bestbuy.com/checkout/r/fast-track')
+        print('fastracked to checkout')
+        try:
+            cvv_field = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.ID, "credit-card-cvv"))
+            )
+            cvv_field.send_keys(CVV)
+        except:
+            print('entering cvv failed after 10s')
 
-        driver.get("https://www.bestbuy.com/cart")
-        print('navigated to cart')
-
-        checkoutBtn = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/main/div/div[2]/div[1]/div/div/span/div/div[2]/div[1]/section[2]/div/div/div[3]/div/div[1]/button"))
-        )
-        checkoutBtn.click()
-        print("clicked check out")
+        in_progress = False
+        count += 1
+        print('successfully checked out!!!')
