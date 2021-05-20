@@ -141,3 +141,6 @@ if __name__ == '__main__':
         in_progress = False
         count += 1
         print('successfully checked out!!!')
+    
+    driver.close()
+    driver.quit()

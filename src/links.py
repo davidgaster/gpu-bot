@@ -24,6 +24,9 @@ card_link = {
         'msi': 'https://www.bestbuy.com/site/msi-nvidia-geforce-rtx-3090-ventus-3x-24g-oc-bv-24gb-gddr6x-pci-express-4-0-graphics-card-black-silver/6430215.p?skuId=6430215', # $2119.99
         'asus': 'https://www.bestbuy.com/site/asus-geforce-rtx-3090-24gb-gddr6x-pci-express-4-0-strix-graphics-card-black/6432447.p?skuId=6432447'                            # $2199.99
     },
+    '5600x': {
+        'amd': 'https://www.amd.com/en/direct-buy/5450881700/us'
+    },
     'test': {
         'fitbit': 'https://www.bestbuy.com/site/fitbit-charge-4-activity-tracker-gps-heart-rate-black/6405752.p?skuId=6405752'
     }
