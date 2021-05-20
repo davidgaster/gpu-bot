@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     driver.get(gpu_link)
     in_progress = True
-    count = 1
+    count, cart_count = 1, 0
     while in_progress and count < 6:
         
         print('iteration ', count)
@@ -116,18 +116,22 @@ if __name__ == '__main__':
                 EC.element_to_be_clickable((By.CSS_SELECTOR, '.add-to-cart-button'))
             )
             add_to_cart_button.click()
-            print('clicked add to cart (x1)')
-
-           # Wait to move on until successfully added to cart.
+            cart_count += 1
+            print('clicked add to cart x', cart_count)
+        except:
+            print(f'unable to add to cart on try {cart_count}')
+            count += 1
+            continue
+        
+        try:
+            # Wait to move on until successfully added to cart.
             added_to_cart = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '.added-to-cart'))
             ) 
         except:
-            print('unable to add to cart')
-            count += 1
+            print('continuing to add to cart again...')
             continue
-        
-        
+
         driver.get('https://www.bestbuy.com/checkout/r/fast-track')
         print('fastracked to checkout')
         try:
@@ -137,10 +141,12 @@ if __name__ == '__main__':
             cvv_field.send_keys(CVV)
         except:
             print('entering cvv failed after 10s')
+            continue
 
         in_progress = False
         count += 1
         print('successfully checked out!!!')
     
+    time.sleep(60)
     driver.close()
     driver.quit()

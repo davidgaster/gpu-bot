@@ -1,4 +1,10 @@
 '''
+****************************************
+ABANDON SHIP
+AMD's recaptcha is LEETCODE HARD LEVEL.
+Better off doing it via my own browser.
+****************************************
+
 AMD Checkout process - Keep refreshing page every 5 seconds
 1. add to cart button
 <button class="btn-shopping-cart btn-shopping-neutral use-ajax" href="/en/direct-buy/add-to-cart/5450881700">
@@ -71,7 +77,6 @@ EMAIL = os.getenv('EMAIL')
 PHONE = os.getenv('PHONE')
 FNAME = os.getenv('FNAME')
 LNAME = os.getenv('LNAME')
-COUNTRY = os.getenv('COUNTRY')
 ADDRESS = os.getenv('ADDRESS')
 CITY = os.getenv('CITY')
 POSTAL = os.getenv('POSTAL')
@@ -104,7 +109,8 @@ if __name__ == '__main__':
     # Wait to move on until successfully signed in.
 
     driver.get(gpu_link)
-    time.sleep(2)
+    driver.maximize_window()
+    time.sleep(1.812)
     in_progress = True
     count = 1
     while in_progress and count < 2:
@@ -129,7 +135,7 @@ if __name__ == '__main__':
         
         
         print('YOU NEED TO click recaptcha!!!')
-        time.sleep(30)
+        time.sleep(60)
 
         try:
             confirm_add_to_cart_button = WebDriverWait(driver, 10).until(
@@ -142,70 +148,94 @@ if __name__ == '__main__':
             print('unable to CONFIRM add to cart')
             count += 1
             continue
-        time.sleep(0.6)
 
-        try:
-            checkout_button = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, '.checkout'))
-            )
-            checkout_button.click()
-            print('clicked checkout')
-
-        except:
-            print('unable to click checkout')
-            count += 1
-            continue
-        time.sleep(0.5)
-
+        in_progress = False
+        count += 1
 
         ################
         # PAYMENT PAGE #
         ################
+    in_progress = True
+    while in_progress:
         try:
-             = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.ID, ''))
+            card = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.ID, 'ccNumber'))
             )
-            .send_keys(CVV)
-            print('')
+            card.send_keys(CARD)
 
         except:
-            print('')
+            print('waiting for form availability')
             count += 1
-            continue 
+            continue
+        
+        expires = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'ccExpiry'))
+        )
+        expires.send_keys(EXPIRES)
+        
+        cvv = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'card-security-code'))
+        )
+        cvv.send_keys(CVV)
 
-        #################
-        # SHIPPING PAGE #
-        #################
-        try:
-             = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.ID, ''))
-            )
-            .send_keys(CVV)
-            print('')
+        email = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-email'))
+        )
+        email.send_keys(EMAIL)
 
-        except:
-            print('')
-            count += 1
-            continue 
+        phone = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-phone-number'))
+        )
+        phone.send_keys(PHONE)
 
-        ####################
-        # PLACE ORDER PAGE #
-        ####################
-        try:
-             = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.ID, ''))
-            )
-            .send_keys(CVV)
-            print('')
+        fname = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-first-name'))
+        )
+        fname.send_keys(FNAME)
 
-        except:
-            print('')
-            count += 1
-            continue 
+        lname = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-last-name'))
+        )
+        lname.send_keys(LNAME)
 
-        in_progress = False
-        count += 1
+        address = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-address-line'))
+        )
+        address.send_keys(ADDRESS)
+        
+        city = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-city'))
+        )
+        city.send_keys(CITY)
+        
+        postal = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'edit-postal-code'))
+        )
+        postal.send_keys(POSTAL)
+
+
+        # #################
+        # # SHIPPING PAGE #
+        # #################
+        # try:
+        #      = WebDriverWait(driver, 10).until(
+        #         EC.element_to_be_clickable((By.ID, ''))
+        #     )
+        #     .send_keys(CVV)
+        #     print('')
+
+        # except:
+        #     print('')
+        #     count += 1
+        #     continue 
+
+        # ####################
+        # # PLACE ORDER PAGE #
+        # ####################
+        # Have to manually do recaptcha
+
+        
         print('successfully checked out!!!')
     
-    driver.close()
-    driver.quit()
+    while True:
+        count += 1

@@ -27,10 +27,8 @@ edit-email
 edit-phone-number
 edit-first-name
 edit-last-name
-edit-shop-country
 edit-address-line
 edit-city
-edit-state
 edit-postal-code
 
 
