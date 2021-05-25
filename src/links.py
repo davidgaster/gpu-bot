@@ -29,5 +29,8 @@ card_link = {
     },
     'test': {
         'fitbit': 'https://www.bestbuy.com/site/fitbit-charge-4-activity-tracker-gps-heart-rate-black/6405752.p?skuId=6405752'
+    },
+    'hd': {
+        'external': 'https://www.bestbuy.com/site/wd-my-passport-for-mac-2tb-external-usb-3-0-portable-hard-drive-blue/6356884.p?skuId=6356884'
     }
 }

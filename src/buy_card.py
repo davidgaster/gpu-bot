@@ -111,34 +111,50 @@ if __name__ == '__main__':
 
     driver.get(gpu_link)
     in_progress = True
-    count, cart_count = 1, 0
-    while in_progress and count < 6:
+    while in_progress:
+        try:
+            add_to_cart_button = WebDriverWait(driver, 6).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, '.add-to-cart-button'))
+            )
+            add_to_cart_button.click()
+            print('clicked add to cart first time!')
+        except:
+            print(f'refresh {brand} {series}')
+            driver.refresh()
+            continue
+        in_progress = False
+
+    in_progress = True
+    while in_progress:
         
-        print('iteration ', count)
-        print('------------')
+        print('waiting for yellow add to cart...')
+        time.sleep(2)
         try:
             add_to_cart_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, '.add-to-cart-button'))
             )
             add_to_cart_button.click()
-            cart_count += 1
-            print('clicked add to cart: ', cart_count)
+            print('clicked add to second time!')
         except:
-            print(f'unable to add to cart on try {cart_count}')
-            count += 1
             continue
-        
+        in_progress = False
+    
+    in_progress = True
+    while in_progress:
         try:
-            # Wait to move on until successfully added to cart.
+            # Wait to move on until Check mark appears!
             added_to_cart = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '.added-to-cart'))
             ) 
         except:
             print('continuing to add to cart again...')
             continue
-
-        driver.get('https://www.bestbuy.com/checkout/r/fast-track')
-        print('fastracked to checkout')
+        in_progress = False
+    
+    driver.get('https://www.bestbuy.com/checkout/r/fast-track')
+    print('fastracked to checkout')
+    in_progress = True
+    while in_progress:
         try:
             cvv_field = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.ID, "credit-card-cvv"))
@@ -149,9 +165,15 @@ if __name__ == '__main__':
             continue
 
         in_progress = False
-        count += 1
-        print('successfully checked out!!!')
     
-    time.sleep(60)
+    place_order_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".button__fast-track"))
+        )
+    print(place_order_button.text)
+    #place_order_button.click()
+
+    print(f'successfully checked out {brand} {series}!!!')
+    
+    time.sleep(30)
     driver.close()
     driver.quit()
